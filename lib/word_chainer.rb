@@ -5,29 +5,48 @@ class WordChainer
   def initialize
     @dictionary = self.get_dictionary()
     @current_words = []
-    @all_seen_words = []
+    @all_seen_words = {}
   end
 
   def run(source, target)
     @current_words = adjacent_words(source)
-    @all_seen_words = @current_words.dup
+    @all_seen_words[source] = nil
+
+    @current_words.each do |word|
+      @all_seen_words[word] = source
+    end
 
     while !@current_words.empty?
-      new_current_words = []
+      explore_current_words
+    end
+
+  end
+
+  def explore_current_words
+    new_current_words = []
       @current_words.each do |current_word|
         adjacents = adjacent_words(current_word)
         adjacents.each do |adjacent_word|
           next if @all_seen_words.include?(adjacent_word)
           new_current_words << adjacent_word
-          @all_seen_words << adjacent_word
+          @all_seen_words[adjacent_word] = current_word
         end
 
       end
-      p new_current_words
+      new_current_words.each do |word|
+        p "#{word} comes from #{@all_seen_words[word]}"
+      end
       @current_words = new_current_words
+  end
 
+  def build_path(target)
+    path = [target]
+    found_source = false
+    while !found_source
+      path.unshift(@all_seen_words[path[0]])
+      found_source = true unless @all_seen_words[path[0]]
     end
-
+    path
   end
 
   def get_dictionary
@@ -60,5 +79,6 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   chainer = WordChainer.new
-  chainer.run('cat', 'dog')
+  chainer.run('market', 'region')
+  p chainer.build_path('region')
 end
