@@ -18,6 +18,7 @@ class WordChainer
 
     while !@current_words.empty?
       explore_current_words
+      return if @all_seen_words.include?(target)
     end
 
   end
@@ -30,6 +31,7 @@ class WordChainer
           next if @all_seen_words.include?(adjacent_word)
           new_current_words << adjacent_word
           @all_seen_words[adjacent_word] = current_word
+
         end
 
       end
@@ -79,6 +81,6 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   chainer = WordChainer.new
-  chainer.run('market', 'region')
-  p chainer.build_path('region')
+  chainer.run('market', 'toiler')
+  p chainer.build_path('toiler')
 end
