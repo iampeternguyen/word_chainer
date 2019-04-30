@@ -4,6 +4,30 @@ class WordChainer
 
   def initialize
     @dictionary = self.get_dictionary()
+    @current_words = []
+    @all_seen_words = []
+  end
+
+  def run(source, target)
+    @current_words = adjacent_words(source)
+    @all_seen_words = @current_words.dup
+
+    while !@current_words.empty?
+      new_current_words = []
+      @current_words.each do |current_word|
+        adjacents = adjacent_words(current_word)
+        adjacents.each do |adjacent_word|
+          next if @all_seen_words.include?(adjacent_word)
+          new_current_words << adjacent_word
+          @all_seen_words << adjacent_word
+        end
+
+      end
+      p new_current_words
+      @current_words = new_current_words
+
+    end
+
   end
 
   def get_dictionary
@@ -32,7 +56,9 @@ class WordChainer
   end
 end
 
+
+
 if __FILE__ == $PROGRAM_NAME
   chainer = WordChainer.new
-  p chainer.adjacent_words('cat')
+  chainer.run('cat', 'dog')
 end
